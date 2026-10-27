@@ -23,6 +23,15 @@ clk_div_n #(.DIV_CLK(5)) div5 (
     .clk_out(clk_5)    
 );
 
+
+task reset();
+    @(negedge clk);
+    rst_n <= 0;
+
+    @(negedge clk);
+    rst_n <= 1;
+endtask
+
 initial begin
     clk = 0;
     forever begin
@@ -34,12 +43,10 @@ initial begin
     $dumpfile("wave.vcd");
     $dumpvars(0, clk_div_n_tb);
     
-    rst_n = 0;
-    #20;
-    rst_n = 1;
+    reset();
 
-    for (integer i = 0; i < 25; i++) begin
-        #5;
+    for (integer i = 0; i < 10; i++) begin
+        @(posedge clk);
     end
 
     $finish;
